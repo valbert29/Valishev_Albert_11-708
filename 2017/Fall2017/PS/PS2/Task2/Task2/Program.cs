@@ -13,9 +13,9 @@ namespace Ex2
         {
             Console.WriteLine("Введите точность: ");//Exercise 2
             double e = double.Parse(Console.ReadLine());
-            Console.WriteLine(TestClass.FindCos(e, 0.0));
+            Console.WriteLine(Class.FindCos(e, 0.0));
         }
-        
+
     }
 
 }

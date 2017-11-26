@@ -1,4 +1,4 @@
-﻿using ConsoleApp37;
+﻿using LibraryFor1c;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +9,15 @@ namespace The1Point3Task
 {
     class Program
     {
-        static void Main(string[] args)//Ex 1.3 Valishev 2var
+        static void Main(string[] args)//exercise 1.3 Valishev 2var
         {
             Console.WriteLine("Введите x: ");
             int x = int.Parse(Console.ReadLine());
             Console.WriteLine("Введите точность: ");
             double e = double.Parse(Console.ReadLine());
-            Console.WriteLine("Сумма последовательности - {0}", TestClassFor1.CalculateGraduatedNum(e, x));
+            var result = TestClassFor1c.CalculateGraduatedNum(e, x);
+            Console.WriteLine("Сумма последовательности: {0}, Шаг: {1} ", result[0], result[1]);
         }
-        
+
     }
 }
