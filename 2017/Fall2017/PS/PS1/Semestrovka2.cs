@@ -18,6 +18,7 @@ namespace ConsoleApp13
             int n = int.Parse(Console.ReadLine());
             int a = 0;
             int k = 0;
+	    // ---check--- оптимальнее это было делать без цикла
             while (a < n)
             {
                 k += 1;
