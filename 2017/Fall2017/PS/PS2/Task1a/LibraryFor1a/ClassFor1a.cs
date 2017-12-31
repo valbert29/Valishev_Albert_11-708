@@ -15,6 +15,7 @@ namespace LibraryFor1a
                 value += c;
                 step++;
             }
+			// ---check--- надо убирать эти мусорные комментарии
             //Console.Write("Шаг - " + (step - 1));
             //Console.WriteLine();
             return new double[] {value, step};
