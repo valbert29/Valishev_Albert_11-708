@@ -1,0 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _1практика
+{
+    class Element
+    {
+        public int up { get; set;}
+        public int down { get; set;}
+
+        public Element(int up, int down)
+        {
+            this.up = up;
+            this.down = down;
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Введите n: ");
+            Farey(1 + int.Parse(Console.ReadLine()));
+        }
+
+        public static void Farey(int n)
+        {
+            var head = new Element(0,1);
+            var tail = new Element(1,1);
+            var range = new List<Element>();
+            range.Add(head);
+            range.Add(tail);
+            for(int i =0; i<n; i++)
+            {
+                var j = 1;
+                while (j<range.Count)
+                {
+                    if(range[j-1].down + range[j].down == i)
+                    {
+                        range.Insert(j, new Element(range[j-1].up + range[j].up, range[j-1].down + range[j].down));
+                    }
+                    j++;
+                }
+                
+            }
+            PrintOut(range);
+        }
+
+        public static void PrintOut(List<Element> file)
+        {
+            for(int i = 0; i<file.Count();i++)
+            {
+                Console.Write("{0}/{1} ", file[i].up, file[i].down);
+            }
+        }
+
+
+    }
+}
