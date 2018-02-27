@@ -4,119 +4,51 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Practice1
+namespace SvyazGraph
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var c = new MyList();
-            for (int i = 0; i < 5; i++) c.Push(i);
-            Console.WriteLine(c.Search(2));
-            Console.WriteLine(c.Count());
-            c.PrintOut();
 
-
-
+            var c = new SvyaznoiGraph();
+            while (true)
+            {
+                Console.WriteLine("1-");
+                int i = int.Parse(Console.ReadLine());
+                Console.WriteLine("2-");
+                int j = int.Parse(Console.ReadLine());
+                var str = new int[10];
+                str[i-1] = i;
+                c.AddGraph(i, j, new int[10]);
+            }
         }
-    }
+}
 
-    public class Node
+class SvyaznoiGraph
+{   
+
+    public bool IsCorrect(int i, int j)
     {
-        public int Data { get; set; }
-        public Node Next { get; set; }
-
-        public Node(int data)
-        {
-            Data = data;
-            Next = null;
-        }
+        return (i == j);
     }
 
-    public class MyList
+    public void AddGraph(int i, int j, int[] str)
     {
-        public Node tail;
-        public Node head;
-        public Node Element;
-
-        public void Push(int data)
+        if (IsCorrect(str[i], str[j]))
         {
-            if (head == null)
-            {
-                tail = head = new Node(data);
-            }
-            else
-            {
-                Element = new Node(data);
-                tail.Next = Element;
-                tail = Element;
-            }
-
+                Console.WriteLine("Already exist");
         }
-
-        public int Pop()
+        else
         {
-            if (head == null)
+            for (int k = 0; k < str.Length; k++)
             {
-                throw new InvalidOperationException();
+                if (str[k] == j)
+                {
+                    str[k] = str[i];
+                }
             }
-            var result = head.Data;
-            head = head.Next;
-            if (head == null) tail = null;
-            return result;
         }
-
-        public int Search(int value)
-        {
-            if (head == null)
-            {
-                throw new InvalidOperationException();
-            }
-            int i = 0;
-            Element = head;
-            while (value != Element.Data)
-            {
-                Element = Element.Next;
-                i++;
-            }
-            return i+1;
-        }
-
-        public int Count()
-        {
-            Element = head;
-            int i = 0;
-            while (Element.Next != null)
-            {
-                i++;
-                Element = Element.Next;
-            }
-            return i;
-        }
-
-        public void PrintOut()
-        {
-            Element = head;
-            if (Element == null)
-            {
-                throw new InvalidOperationException();
-            }
-            Console.WriteLine(Element.Data);
-            while (Element.Next != null)
-            {
-                Element = Element.Next;
-                Console.WriteLine(Element.Data);
-                
-            }
-            
-        }
-        /*public int Insert()
-        {
-            return
-        }*/
-
-
     }
-
-
+}
 }
