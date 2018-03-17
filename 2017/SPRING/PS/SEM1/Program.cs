@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,39 +12,38 @@ namespace Semestr1
     {
         static void Main(string[] args)
         {
+
+            var myList = new FigureList();
             var myDo = new Do();
-            var myList = myDo.MyList;
+            //myDo.MyList = myList;
+            myDo.MyList = myList;
 
             myList.Add(new Figure(1, 2, 3, 4, 5, 6), 0);
+            myList.Add(new Figure(2, 2, 3, 3, 5, 6), 1);
+            myList.Add(new Figure(3, 2, 3, 4, 5, 6), 2);
             myList.Remove(new Figure(1, 2, 3, 4, 5, 6));
-            myList = myDo.RectangleCoordinates(new Figure(1, 2, 3, 4, 5, 6));
-            var list = myDo.Encode();
-            myDo.MyList = list;
+            Console.WriteLine("basic methods:");
             myDo.Decode();
-            //сначала ссылку с вспомогательного класса переносим на тот, над которым хотим работать и работаем
-            myDo.MyList = myList;
-            myDo.LinesToRectangle();
-            var myList1 = new FigureList();
-            var list2 = new Do();
-            list2.MyList = myList1;
-            var rnd = new Random();
-            for (int i = 0; i < 7; i++)
-            {
-                myList1.Add(new Figure(2, rnd.Next(0, 6), rnd.Next(0, 6),
-    rnd.Next(0, 4), rnd.Next(0, 4), rnd.Next(0, 4)), i);
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                myList1.Add(new Figure(2, i, i, i, i, rnd.Next(0, 8)), i);
-            }
-            var newLine = list2.LinesToRectangle();
-            Figure item = newLine.head;
-            var n = -1;
-            while (item != null)
-            {
-                if (item.Type != 1) n = 1;
-                item = item.Next;
-            }
+                        
+            myList = myDo.RectangleCoordinates(new Figure(1, 2, 3, 4, 5, 6));
+            Console.WriteLine("rectCoordsList:");
+            myDo.Decode();
+            
+            myList = myDo.Encode();
+            Console.WriteLine("Encode:");
+            myDo.Decode();
+
+            myDo.Encode();
+            myList = myDo.LinesToRectangle();
+            Console.WriteLine("lineToRectList:");
+            myDo.Decode();
+
+            Console.WriteLine("Введите констaнту:");
+            int n = int.Parse(Console.ReadLine());
+            myDo.BuildListByConst(n);
+            Console.WriteLine("byConstList:");
+            myDo.Decode();
+
 
         }
     }
