@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,7 +41,6 @@ namespace Semestr1
             if ((item.XLU != elem.XLU) || (item.XRD != elem.XRD) ||
                 (item.YLU != elem.YLU) || (item.YRD != elem.YRD))
                 correct = false;
-            //if (item.Color == elem.Color) n++;
             return correct;
         }
         //считает кол-во объектов, длину листа
@@ -94,7 +94,7 @@ namespace Semestr1
             CheckExistence(elem);
             if (IsEmpty)
             {
-                tail = head = elem; //new Figure { XLU = xLU, XRD = xRD, YLU = yLU, YRD = yRD, Color = color, Next = null };
+                tail = head = elem; 
             }
             else
             {
@@ -137,8 +137,6 @@ namespace Semestr1
                 item = item.Next;
             }
             if (n < 0) throw new InvalidOperationException();
-        }
-
-
+        } 
     }
 }
