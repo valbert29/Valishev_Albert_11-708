@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,7 +41,7 @@ namespace Semestr1
             Figure item = MyList.head;
             while (item != null)
             {
-                Console.Write("{0} {1} {2} {3} {4} {5}", item.Type, item.XLU, item.YLU, item.XRD, item.YRD, item.Color);
+                Console.Write("{0} \t{1} \t{2} \t{3} \t{4} \t{5}", item.Type, item.XLU, item.YLU, item.XRD, item.YRD, item.Color);
                 item = item.Next;
                 MyList.head = item;
                 Console.WriteLine();
@@ -60,7 +60,7 @@ namespace Semestr1
                 if (item == 3)
                 {
                     MyList.AddLast(new Figure(item, rectangle.XLU,
-                rectangle.YLU, rnd.Next(1, 10), 0, rnd.Next(1, 4)));
+                rectangle.YLU, Math.Abs(rectangle.XRD-rectangle.XLU), 0, rnd.Next(1, 4)));
                 }
                 else
                 {
@@ -92,6 +92,7 @@ namespace Semestr1
                         MyList.Remove(item);
                     }
                 }
+                item = item.Next;
             }
             return MyList;
         }
@@ -103,7 +104,7 @@ namespace Semestr1
             Random rnd = new Random();
             while (MyList.Count() < 5)
             {
-                int type = rnd.Next(1, 4);
+                int type = rnd.Next(1, 4);  
                 if (type == 1)
                 {
                     int x1 = rnd.Next(0, 25);
