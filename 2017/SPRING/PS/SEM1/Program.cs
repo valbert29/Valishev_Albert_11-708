@@ -14,35 +14,34 @@ namespace Semestr1
         {
 
             var myList = new FigureList();
-            var myDo = new Do();
-            //myDo.MyList = myList;
-            myDo.MyList = myList;
+            var helper = new Tools();
+            helper.MyList = myList;
 
             myList.Add(new Figure(1, 2, 3, 4, 5, 6), 0);
             myList.Add(new Figure(2, 2, 3, 3, 5, 6), 1);
             myList.Add(new Figure(3, 2, 3, 4, 5, 6), 2);
             myList.Remove(new Figure(1, 2, 3, 4, 5, 6));
             Console.WriteLine("basic methods:");
-            myDo.Decode();
+            helper.Decode();
                         
-            myList = myDo.RectangleCoordinates(new Figure(1, 2, 3, 4, 5, 6));
+            myList = helper.RectangleCoordinates(new Figure(1, 2, 3, 4, 5, 6));
             Console.WriteLine("rectCoordsList:");
-            myDo.Decode();
+            helper.Decode();
             
-            myList = myDo.Encode();
+            myList = helper.Encode();
             Console.WriteLine("Encode:");
-            myDo.Decode();
+            helper.Decode();
 
-            myDo.Encode();
-            myList = myDo.LinesToRectangle();
+            helper.Encode();
+            myList = helper.LinesToRectangle();
             Console.WriteLine("lineToRectList:");
-            myDo.Decode();
+            helper.Decode();
 
             Console.WriteLine("Введите констaнту:");
             int n = int.Parse(Console.ReadLine());
-            myDo.BuildListByConst(n);
+            helper.BuildListByConst(n);
             Console.WriteLine("byConstList:");
-            myDo.Decode();
+            helper.Decode();
 
 
         }
