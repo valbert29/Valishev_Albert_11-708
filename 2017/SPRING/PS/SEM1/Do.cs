@@ -7,31 +7,31 @@ using System.Threading.Tasks;
 
 namespace Semestr1
 {
-    public class Tools
+    public class Tool
     {
 
         public FigureList MyList = new FigureList();
 
         //метод кодирования - создание списка элементов, считыванием с файла
-        public FigureList Encode()
+        public FigureList Encode(string link)
         {
-            TextReader objReader = new StreamReader(@"C:\Users\Пользователь\Desktop\TEXT.txt");
+            TextReader objReader = new StreamReader(link);
 
             while (true)
             {
                 var sLine = objReader.ReadLine();
                 if (sLine == null ) break;
                 string[] str = sLine.Split(' ');
-                Create(str);
+                CreateAndAdd(str);
 
             }
             return MyList;
         }
 
         //вспомогательный метод, который создает элементы листа и добавляет в лист
-        private void Create(string[] str)
+        private void CreateAndAdd(string[] str)
         {
-            MyList.Add(new Figure(Convert.ToInt32(str[0]), Convert.ToInt32(str[1]), Convert.ToInt32(str[2]),
+            MyList.AddByIndex(new Figure(Convert.ToInt32(str[0]), Convert.ToInt32(str[1]), Convert.ToInt32(str[2]),
                 Convert.ToInt32(str[3]), Convert.ToInt32(str[4]), Convert.ToInt32(str[5])), Convert.ToInt32(str[6]));
         }
 
@@ -49,7 +49,7 @@ namespace Semestr1
         }
 
         //по координатам прямоугольника строит список состоящий из фигур с теми же координатами
-        public FigureList RectangleCoordinates(Figure rectangle)
+        public FigureList CreateByRectangleCoordinates(Figure rectangle)
         {
             if (rectangle.Type != 1) throw new ArgumentException();
             Random rnd = new Random();
@@ -113,7 +113,7 @@ namespace Semestr1
                     int y2 = rnd.Next(25, 50);
                     if (y2 - y1 > constant || x2 - x1 > constant)
                     {
-                        MyList.Add(new Figure(type, x1, y1, x2, y2, rnd.Next(1, 8)), 0);
+                        MyList.AddByIndex(new Figure(type, x1, y1, x2, y2, rnd.Next(1, 8)), 0);
                     }
                 }
                 if (type == 3)
@@ -123,7 +123,7 @@ namespace Semestr1
                     int x2 = rnd.Next(0, 15);
                     if (x2 * 6 > constant)
                     {
-                        MyList.Add(new Figure(type, x1, y1, x2, 0, rnd.Next(1, 8)), 0);
+                        MyList.AddByIndex(new Figure(type, x1, y1, x2, 0, rnd.Next(1, 8)), 0);
                     }
                 }
             }
