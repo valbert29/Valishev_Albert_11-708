@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Semestr1
 {
-    public class Do
+    public class Tools
     {
 
         public FigureList MyList = new FigureList();
