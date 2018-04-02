@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,17 +27,35 @@ namespace _270318practice
 
         public static string[] FindFirstElem(int l, IEnumerable<string> lines)
         {
+            var c = true;
             return lines
                  .Where(line =>
                  {
-                     while (line.Length < l)
+                     if (!c)
                      {
-                         return (line.Length <= l && 0 <= line[line.Length - 1] - 90 && line[line.Length - 1] - 90 <= 35);
+                         return false;
                      }
-                     return false;
+                     else
+                     {
+                         c = (line.Length <= l && 0 <= line[line.Length - 1] - 90 && line[line.Length - 1] - 90 <= 35);
+                         if (line.Length > l) c = false;
+                     }
+                     return c;
                  })
                  .OrderByDescending(x => x.Length).ThenBy(x => StringComparer.CurrentCulture)
                  .ToArray();
+        }
+
+        public static string[] FindSequence(int l, IEnumerable<string> lines)
+        {
+            return lines
+                .TakeWhile(line => line.Length < l)
+                .Where(line =>
+                {
+                    return 0 <= line[line.Length - 1] - 90 && line[line.Length - 1] - 90 <= 35;
+                })
+                .OrderByDescending(x => x.Length).ThenBy(x => x)
+                .ToArray();
         }
     }
 }
