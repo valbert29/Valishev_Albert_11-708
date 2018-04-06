@@ -1,0 +1,70 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Extrcise4
+{
+    class Program
+    /*4. Даны последовательности D и E, включающие сле-
+дующие поля:
+D: <Цена (в рублях)> <Артикул товара>
+<Название магазина>
+E: <Код потребителя> <Название магазина>
+<Артикул товара>
+Свойства последовательностей описаны в преамбуле к дан-
+ной подгруппе заданий. Для каждого товара определить ко-
+личество покупок данного товара и максимальную цену по-
+купки (вначале выводится количество покупок, затем арти-
+кул товара, затем максимальная цена покупки). Если некото-
+рый товар ни разу не был продан, то информация об этом то-
+варе не выводится. Сведения о каждом товаре выводить на
+новой строке и упорядочивать по возрастанию количества
+покупок, а в случае одинакового количества — по артикулам
+товаров в алфавитном порядке.*/
+    {
+        static void Main(string[] args)
+        {
+            var d = new List<D> { new D(10, "E", 1), new D(20, "H", 2), new D(35, "d", 1), new D(25, "d", 4) };
+            var e = new List<E> { new E(1, "s", 4), new E(2, "a", 5), new E(3, "a", 6) };
+
+            var item = d.GroupJoin(e, x => x.Art, y => y.Art, (x, y) =>
+                new
+                {
+                    Number = y.Aggregate(0, (acc, z) => acc + 1),
+                    x.Art,
+                    Cost = x.Price
+                })
+                .GroupBy(x => x.Art)
+                .Select(x =>
+                {
+                    var number = x.Aggregate(0, (acc, y) => acc + y.Number);
+                    var maxPrice = x.Aggregate(int.MinValue, (acc, z) => acc = Math.Max(z.Cost, acc));
+                    if (maxPrice == int.MinValue) maxPrice = 0;
+                    return new { Number = number, Artic = x.Key, Cost = maxPrice };
+
+                })
+                .Where(n => n.Number != 0)
+                .OrderBy(x => x.Number)
+                .ThenBy(x => x.Artic);
+
+            var res =
+                from d1 in d
+                join e1 in e
+                on d1.Art equals e1.Art
+                select new { d1.Art, d1.Price }
+                into sq
+                group sq by sq.Art
+                into sg
+                orderby sg.Count(), sg.Key
+                let number = sg.Aggregate(0, (acc, y) => acc + 1)
+                let maxPrice = sg.Aggregate(int.MinValue, (acc, z) => acc = Math.Max(z.Price, acc))
+                select new { Number = sg.Count(), Artic = sg.Key, Price = maxPrice };
+            Console.WriteLine();
+            Console.WriteLine(string.Join("\n", item));
+        }
+
+
+    }
+}
