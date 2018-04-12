@@ -1,0 +1,175 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KontLINQ
+{
+    class Program
+    {/*4. Даны строковые последовательности A и B, все строки в каждой из них имеют ненулевую длину.
+        Сформировать последовательностей строк вида «a.b», где а – строка из А,
+        b – либо строка из B с совпадающим количеством букв "q", что и в строке a,
+        либо строка из одного символа “!”.
+        Расположить элементы получившейся последовательности в лексикографическом порядке по убыванию.*/
+        static void Main(string[] args)
+        {
+            var ex11 = new string[] { "abq", "aaqq", "zzqq", "s" };
+            var ex12 = new string[] { "baq", "qqaa", "zzqqq", "zq" };
+            Console.WriteLine(string.Join(", ", Ex1(ex11, ex12)));
+        }
+
+        /*Сформировать последовательностей строк вида «a.b», где а – строка из А,
+        b – либо строка из B с совпадающим количеством букв "q", что и в строке a,
+        либо строка из одного символа “!”.
+        Расположить элементы получившейся последовательности в лексикографическом порядке по убыванию.*/
+        public static IEnumerable<string> Ex1(IEnumerable<string> str1, IEnumerable<string> str2)
+        {
+            var item = str1
+                .Select(x => x).Concat(str2.Select(y => y));
+            return item
+                .GroupJoin(item, x => Ex1Helper(x), y => Ex1Helper(y), (x, y) => y.DefaultIfEmpty("!").Select(z => x + "." + z))
+                .SelectMany(x => x)
+                .OrderByDescending(x => x);
+        }
+
+        public static int Ex1Helper(string item)
+        {
+            var count = 0;
+            foreach (var it in item)
+            {
+                if (it == 'q')
+                    count++;
+            }
+            return count;
+        }
+
+        /*Даны последовательности C, D и E, включающие следующие поля:
+C: <Скидка(в процентах)> <Название магазина> <Код потребителя>
+D: <Артикул товара> <Название магазина> <Цена(в рублях)>
+E: <Артикул товара> <Название магазина> <Код потребителя>
+Свойства последовательностей описаны в преамбуле.
+Для каждого магазина и каждого товара определить количество покупок
+этого товара со скидкой в данном магазине и суммарную стоимость этих пок
+упок с учетом скидки(вначале выводится название магазина, затем артикул 
+товара, затем количество покупок со скидкой и их суммарная стоимость). При
+вычислении размера скидки на товар копейки отбрасываются.Если для некоторой
+пары «магазин–товар» не найдено ни одной покупки со скидкой, то информация о данной паре не выводится
+.Если не найдено ни одной подходящей пары «магазин–товар», то записать в результирующий файл текст «
+Требуемые данные не найдены». Сведения о каждой паре «магазин–товар» выводить на новой строке и упо
+рядочивать по названиям магазинов в алфавитном порядке, а для одинаковых названий — по артикулам тов
+аров (также в алфавитном порядке).*/
+        static void EX3()
+        {
+            var goods = Helpers.ReadItems<Item3>("goods.txt");
+            var discount = Helpers.ReadItems<Discount>("discounts.txt");
+            var prices = Helpers.ReadItems<Cost>("prices.txt");
+            var orders = Helpers.ReadItems<Order>("orders.txt");
+
+            var result =
+                from o in orders
+                join i in goods on o.ItemArticle equals i.Article
+                join p in prices
+                    on new { o.ItemArticle, o.ShopName } equals new { p.ItemArticle, p.ShopName }
+                join d in discount
+                    on new { o.CustomerId, o.ShopName } equals new { d.CustomerId, ShopName = d.Shop }
+                    into ds
+                from d in ds.DefaultIfEmpty(new Discount())
+                select new { i.Category, p.ShopName, Discount = p.Price * d.DiscountPercent / 100 }
+                    into tmp
+                group tmp by new { tmp.Category, tmp.ShopName } into g
+                select new { g.Key.Category, g.Key.ShopName, TotalDiscount = g.Sum(x => x.Discount) };
+
+            var result1 =
+               from p in prices
+               join i in goods on p.ItemArticle equals i.Article
+               join o in orders
+                   on new { p.ItemArticle, p.ShopName } equals new { o.ItemArticle, o.ShopName }
+                   into oSeq
+               from o in oSeq
+               join d in discount
+                   on new { o.CustomerId, o.ShopName } equals new { d.CustomerId, ShopName = d.Shop }
+                   into ds
+               from d in ds.DefaultIfEmpty(new Discount())
+               select new { i.Category, p.ShopName, Discount = p.Price * d.DiscountPercent / 100 }
+                   into tmp
+               group tmp by new { tmp.Category, tmp.ShopName } into g
+               select new { g.Key.Category, g.Key.ShopName, TotalDiscount = g.Sum(x => x.Discount) };
+
+        }
+    }
+
+    public class Item3
+    {
+        public string Article { get; set; }
+        public string Category { get; set; }
+        public string Country { get; set; }
+    }
+
+    public class Discount
+    {
+        public int CustomerId { get; set; }
+        public string Shop { get; set; }
+        public int DiscountPercent { get; set; }
+    }
+
+    public class Cost
+    {
+        public string ItemArticle { get; set; }
+        public string ShopName { get; set; }
+        public double Price { get; set; }
+    }
+
+    public class Order
+    {
+        public int CustomerId { get; set; }
+        public string ShopName { get; set; }
+        public string ItemArticle { get; set; }
+    }
+
+    public static class Helpers
+    {
+        public static T Create<T>(string str)
+            where T : new()
+        {
+            var result = new T();
+
+            var data = str.Split(' ');
+            var properties = typeof(T).GetProperties();
+            for (int i = 0; i < properties.Length; i++)
+            {
+                properties[i].SetValue(result, Convert.ChangeType(data[i], properties[i].PropertyType), null);
+            }
+
+            return result;
+        }
+
+        public static IEnumerable<T> ReadItems<T>(string filename)
+            where T : new()
+        {
+            return File
+                .ReadAllLines(filename)
+                .Select(Create<T>).ToList();
+        }
+    }
+
+    /*4. Реализуйте метод расширения Partition для последовательностей IEnumerable<T>,
+         * формирующий последовательность пар (Tuple),
+         * элементы которых удовлетворяют и не удовлетворяют некоторому предикату (Func<TItem,bool>)
+         * соответственно (перебрать все возможные пары).*/
+
+    public static class Extentions
+    {
+        public static IEnumerable<Tuple<T1, T2>> Patition<T1, T2>(this IEnumerable<T1> sequence, Func<T, bool> predicate)
+        {
+            var newX = sequence.Where(x => predicate(x)).Select(x => x);
+            var newY = sequence.Where(x => !predicate(x)).Select(x => x);
+            return sequence.Where(x => predicate(x))
+                .GroupJoin(sequence.Where(y => !predicate(y)), x => x, y => y, (x, y) => y
+                .Select(z => Tuple.Create(x, z)));
+        }
+    }
+
+
+}
