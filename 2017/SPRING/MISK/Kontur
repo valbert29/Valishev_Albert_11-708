@@ -161,13 +161,12 @@ E: <Артикул товара> <Название магазина> <Код п�
 
     public static class Extentions
     {
-        public static IEnumerable<Tuple<T1, T2>> Patition<T1, T2>(this IEnumerable<T1> sequence, Func<T, bool> predicate)
+        public static IEnumerable<IEnumerable<Tuple<T,T>>> Patition<T>(this IEnumerable<T> sequence, Func<T, bool> predicate)
         {
             var newX = sequence.Where(x => predicate(x)).Select(x => x);
             var newY = sequence.Where(x => !predicate(x)).Select(x => x);
-            return sequence.Where(x => predicate(x))
-                .GroupJoin(sequence.Where(y => !predicate(y)), x => x, y => y, (x, y) => y
-                .Select(z => Tuple.Create(x, z)));
+            return newX.GroupJoin(newY, x => x, y => y, (x,  y) => y.Select(z => Tuple.Create(x, z)));
+            
         }
     }
 
