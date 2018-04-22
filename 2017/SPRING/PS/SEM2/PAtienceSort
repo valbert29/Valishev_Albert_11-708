@@ -1,0 +1,152 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PatienceSort
+{
+    class PriorityQueue<T> where T : IComparable
+    {
+        private List<Stack<T>> piles;
+
+        public PriorityQueue(List<Stack<T>> piles)
+        {
+            this.piles = piles;
+        }
+
+        public void SiftDown(int i)
+        {
+            while (2 * i + 1 < piles.Count)
+            {
+                int left = 2 * i + 1;
+
+                int right = 2 * i + 2;
+
+                int j = left;
+
+                if (right < piles.Count && piles[right].Peek().CompareTo(piles[left].Peek()) <= 0)
+                    j = right;
+
+                if (piles[i].Peek().CompareTo(piles[j].Peek()) <= 0)
+                    break;
+
+                Swap(piles, i, j);
+
+                i = j;
+            }
+        }
+
+        public T Min()
+        {
+            T min = piles[0].Pop();
+            if (piles[0].Count == 0)
+            {
+                if (piles.Count >= 1)
+                    Swap(piles, 0, piles.Count - 1);
+                piles.RemoveAt(piles.Count - 1);
+            }
+
+            if (piles.Count > 1)
+                SiftDown(0);
+            return min;
+        }
+
+
+        private static void Swap<TItem>(List<TItem> list, int i, int j)
+        {
+            var tmp = list[i];
+            list[i] = list[j];
+            list[j] = tmp;
+        }
+
+        public void BuildHeap()
+        {
+            for (int i = piles.Count / 2; i >= 0; i--)
+                SiftDown(i);
+        }
+
+    }
+
+    class PatienceSort<T> where T : IComparable
+    {
+        public static List<Stack<T>> Piles = new List<Stack<T>>();
+
+
+        public static void Sort(List<T> list)
+        {
+            Piles = new List<Stack<T>>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                int j = BinarySearch(list[i]);
+
+                if (j == Piles.Count)
+                {
+                    Piles.Add(new Stack<T>());
+                    Piles[Piles.Count - 1].Push(list[i]);
+                }
+                else
+                    Piles[j].Push(list[i]);
+            }
+
+            PriorityQueue<T> priorityQueue = new PriorityQueue<T>(Piles);
+
+            priorityQueue.BuildHeap();
+
+            int count = 0;
+
+            while (Piles.Count != 0)
+                list[count++] = priorityQueue.Min();
+        }
+
+        private static int BinarySearch(T item)
+        {
+            int left = 0, rigth = Piles.Count - 1;
+            while (left <= rigth)
+            {
+                int mid = (left + rigth) / 2;
+                if (Piles[mid].Peek().CompareTo(item) >= 0)
+                    rigth = mid - 1;
+                else
+                    left = mid + 1;
+            }
+            return left;
+        }
+
+    }
+
+    class Helper
+    {
+        public void Generate()
+        {
+            var rnd = new Random();
+            for (int i = 100; i <= 10000; i += 100)
+            {
+                var list = new List<string>();
+                for (int j = 0; j < i; j++)
+                {
+                    list.Add(rnd.Next().ToString());
+                }
+                File.WriteAllLines(i.ToString() + ".txt", list.ToArray());
+            }
+        }
+    }
+
+    public class Program
+    {
+        //проверка
+        public static void Main(string[] args)
+        {
+            var s = new Helper();
+            s.Generate();
+            var arr = File.ReadAllLines("1000.txt")
+                .Select(x => Convert.ToInt32(x)).ToList();
+            PatienceSort<int>.Sort(arr);
+            foreach (var item in arr)
+            {
+                Console.Write (item+" ");
+            }            
+        }
+    }
+}
