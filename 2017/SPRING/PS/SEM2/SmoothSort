@@ -1,0 +1,230 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SmoothSort
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var helpMeee = new Helper();
+            helpMeee.Generate();
+            var arr = File.ReadAllLines("1000.txt")
+                .Select(x => Convert.ToInt32(x)).ToArray();
+            Smooth.Smoothsort(arr);
+            foreach (var item in arr)
+            {
+                Console.Write(item + " ");
+            }
+        }
+    }
+
+    class Helper
+    {
+        public void Generate()
+        {
+            var rnd = new Random();
+            for (int i = 100; i <= 10000; i += 100)
+            {
+                var list = new List<string>();
+                for (int j = 0; j < i; j++)
+                {
+                    list.Add(rnd.Next().ToString());
+                }
+                File.WriteAllLines(i.ToString() + ".txt", list.ToArray());
+            }
+        }
+    }
+
+    class Smooth
+    {
+        public static int iterationsCount;
+        public static void Smoothsort(IList array)
+        {
+            iterationsCount = 0;
+            int currentIndex = 1;
+            int nodeIndex = 0;
+            int leftRightTreeAddress = 1;
+            int subTreeSize = 1;
+            int leftSubTreeSize = 1;
+
+            while (currentIndex != array.Count)
+            {
+                if (leftRightTreeAddress % 8 == 3)
+                {
+                    SmoothSift(array, nodeIndex, subTreeSize, leftSubTreeSize);
+                    leftRightTreeAddress = (leftRightTreeAddress + 1) / 4;
+                    SmoothUp(ref subTreeSize, ref leftSubTreeSize);
+                    SmoothUp(ref subTreeSize, ref leftSubTreeSize);
+                }
+                else if (leftRightTreeAddress % 4 == 1)
+                {
+                    if (currentIndex + leftSubTreeSize < array.Count)
+                    {
+                        SmoothSift(array, nodeIndex, subTreeSize, leftSubTreeSize);
+                    }
+                    else
+                    {
+                        SmoothTrinkle(array, nodeIndex, leftRightTreeAddress, subTreeSize, leftSubTreeSize);
+                    }
+                    do
+                    {
+                        SmoothDown(ref subTreeSize, ref leftSubTreeSize);
+                        leftRightTreeAddress = leftRightTreeAddress * 2;
+                    }
+                    while (subTreeSize != 1);
+                    leftRightTreeAddress = leftRightTreeAddress + 1;
+                }
+                currentIndex = currentIndex + 1;
+                nodeIndex = nodeIndex + 1;
+            }
+            SmoothTrinkle(array, nodeIndex, leftRightTreeAddress, subTreeSize, leftSubTreeSize);
+            while (currentIndex != 1)
+            {
+                currentIndex = currentIndex - 1;
+                if (subTreeSize == 1)
+                {
+                    nodeIndex = nodeIndex - 1;
+                    leftRightTreeAddress = leftRightTreeAddress - 1;
+                    while (leftRightTreeAddress % 2 == 0)
+                    {
+                        leftRightTreeAddress = leftRightTreeAddress / 2;
+                        SmoothUp(ref subTreeSize, ref leftSubTreeSize);
+                    }
+                }
+                else if (subTreeSize >= 3)
+                {
+                    leftRightTreeAddress = leftRightTreeAddress - 1;
+                    nodeIndex = nodeIndex + leftSubTreeSize - subTreeSize;
+                    if (leftRightTreeAddress != 0)
+                    {
+                        SmoothSemiTrinkle(array, nodeIndex, leftRightTreeAddress, subTreeSize, leftSubTreeSize);
+                    }
+                    SmoothDown(ref subTreeSize, ref leftSubTreeSize);
+                    leftRightTreeAddress = leftRightTreeAddress * 2 + 1;
+                    nodeIndex = nodeIndex + leftSubTreeSize;
+                    SmoothSemiTrinkle(array, nodeIndex, leftRightTreeAddress, subTreeSize, leftSubTreeSize);
+                    SmoothDown(ref subTreeSize, ref leftSubTreeSize);
+                    leftRightTreeAddress = leftRightTreeAddress * 2 + 1;
+                }
+            }
+        }
+        private static void SmoothUp(ref int lngSubTreeSize, ref int lngLeftSubTreeSize)
+        {
+            int temp = lngSubTreeSize + lngLeftSubTreeSize + 1;
+            lngLeftSubTreeSize = lngSubTreeSize;
+            lngSubTreeSize = temp;
+        }
+        private static void SmoothDown(ref int lngSubTreeSize, ref int lngLeftSubTreeSize)
+        {
+            int temp = lngSubTreeSize - lngLeftSubTreeSize - 1;
+            lngSubTreeSize = lngLeftSubTreeSize;
+            lngLeftSubTreeSize = temp;
+        }
+        private static void SmoothSift(IList array, int nodeIndex, int subTreeSize, int leftSubTreeSize)
+        {
+            int childIndex;
+            while (subTreeSize >= 3)
+            {
+                childIndex = nodeIndex - subTreeSize + leftSubTreeSize;
+                if (CompareItems(array, childIndex, nodeIndex - 1) < 0)
+                {
+                    childIndex = nodeIndex - 1;
+                    SmoothDown(ref subTreeSize, ref leftSubTreeSize);
+                }
+                if (CompareItems(array, nodeIndex, childIndex) >= 0)
+                {
+                    subTreeSize = 1;
+                }
+                else
+                {
+                    SwapItems(array, nodeIndex, childIndex);
+                    nodeIndex = childIndex;
+                    SmoothDown(ref subTreeSize, ref leftSubTreeSize);
+                }
+            }
+        }
+        private static void SmoothTrinkle(IList array, int nodeIndex, int leftRightTreeAddress, int subTreeSize, int leftSubTreeSize)
+        {
+            int childIndex;
+            int previousCompleteTreeIndex;
+            while (leftRightTreeAddress > 0)
+            {
+                while (leftRightTreeAddress % 2 == 0)
+                {
+                    leftRightTreeAddress = leftRightTreeAddress / 2;
+                    SmoothUp(ref subTreeSize, ref leftSubTreeSize);
+                }
+                previousCompleteTreeIndex = nodeIndex - subTreeSize;
+                if (leftRightTreeAddress == 1)
+                {
+                    leftRightTreeAddress = 0;
+                }
+                else if (CompareItems(array, previousCompleteTreeIndex, nodeIndex) <= 0)
+                {
+                    leftRightTreeAddress = 0;
+                }
+                else
+                {
+                    leftRightTreeAddress = leftRightTreeAddress - 1;
+                    if (subTreeSize == 1)
+                    {
+                        SwapItems(array, nodeIndex, previousCompleteTreeIndex);
+                        nodeIndex = previousCompleteTreeIndex;
+                    }
+                    else if (subTreeSize >= 3)
+                    {
+                        childIndex = nodeIndex - subTreeSize + leftSubTreeSize;
+                        if (CompareItems(array, childIndex, nodeIndex - 1) < 0)
+                        {
+                            childIndex = nodeIndex - 1;
+                            SmoothDown(ref subTreeSize, ref leftSubTreeSize);
+                            leftRightTreeAddress = leftRightTreeAddress * 2;
+                        }
+                        if (CompareItems(array, previousCompleteTreeIndex, childIndex) >= 0)
+                        {
+                            SwapItems(array, nodeIndex, previousCompleteTreeIndex);
+                            nodeIndex = previousCompleteTreeIndex;
+                        }
+                        else
+                        {
+                            SwapItems(array, nodeIndex, childIndex);
+                            nodeIndex = childIndex;
+                            SmoothDown(ref subTreeSize, ref leftSubTreeSize);
+                            leftRightTreeAddress = 0;
+                        }
+                    }
+                }
+            }
+            SmoothSift(array, nodeIndex, subTreeSize, leftSubTreeSize);
+        }
+        private static void SmoothSemiTrinkle(IList array, int nodeIndex, int leftRightTreeAddress, int subTreeSize, int leftSubTreeSize)
+        {
+            int indexTopPreviousCompleteHeap;
+            indexTopPreviousCompleteHeap = nodeIndex - leftSubTreeSize;
+            if (CompareItems(array, indexTopPreviousCompleteHeap, nodeIndex) > 0)
+            {
+                SwapItems(array, nodeIndex, indexTopPreviousCompleteHeap);
+                SmoothTrinkle(array, indexTopPreviousCompleteHeap, leftRightTreeAddress, subTreeSize, leftSubTreeSize);
+            }
+        }
+
+        private static void SwapItems(IList arrayToSort, int index1, int index2)
+        {
+            object temp = arrayToSort[index1];
+            arrayToSort[index1] = arrayToSort[index2];
+            arrayToSort[index2] = temp;
+            iterationsCount += 2;
+        }
+        private static int CompareItems(IList arrayToSort, int index1, int index2)
+        {
+            return ((IComparable)arrayToSort[index1]).CompareTo(arrayToSort[index2]);
+        }
+
+    }
+}
