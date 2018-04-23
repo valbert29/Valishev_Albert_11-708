@@ -16,7 +16,7 @@ namespace PatienceSort
             this.piles = piles;
         }
 
-        public void SiftDown(int i)
+        public void SiftDown(int i)//просеиваем, упорядочиваем элементы
         {
             while (2 * i + 1 < piles.Count)
             {
@@ -66,21 +66,23 @@ namespace PatienceSort
             for (int i = piles.Count / 2; i >= 0; i--)
                 SiftDown(i);
         }
-
     }
 
     class PatienceSort<T> where T : IComparable
     {
         public static List<Stack<T>> Piles = new List<Stack<T>>();
 
-
+        
         public static void Sort(List<T> list)
         {
             Piles = new List<Stack<T>>();
+            //проход по всем элементам, генерируем стопку
             for (int i = 0; i < list.Count; i++)
             {
                 int j = BinarySearch(list[i]);
 
+                //если элемент больше MAX элемента в имеющейся стопке то создается новая, 
+                //инчале просто добавляет в ту, меньше котороый он есть
                 if (j == Piles.Count)
                 {
                     Piles.Add(new Stack<T>());
@@ -99,7 +101,7 @@ namespace PatienceSort
             while (Piles.Count != 0)
                 list[count++] = priorityQueue.Min();
         }
-
+        //обычный бинарный поиск для поиска стопки
         private static int BinarySearch(T item)
         {
             int left = 0, rigth = Piles.Count - 1;
@@ -135,17 +137,16 @@ namespace PatienceSort
 
     public class Program
     {
-        //проверка
         public static void Main(string[] args)
         {
             var s = new Helper();
             s.Generate();
-            var arr = File.ReadAllLines("1000.txt")
+            var arr = File.ReadAllLines("100.txt")
                 .Select(x => Convert.ToInt32(x)).ToList();
             PatienceSort<int>.Sort(arr);
             foreach (var item in arr)
             {
-                Console.Write (item+" ");
+                Console.Write(item+" ");
             }            
         }
     }
