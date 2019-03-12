@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>!DOCTYPE</title>
+    <meta charset="utf-8">
+    <style>
+        #txt {
+            border: 2px solid black;
+            height: 30vh;
+            width: 50vw;
+        }
+
+        .btn {
+            border: 1px solid grey;
+        }
+        .name_input {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+    <form action="/StorageNote/SaveNote/">
+        <table>
+            <tr>
+                <td>
+                    <p>Your Note with Name:</p>
+                </td>
+                <td>
+                    <input type="text" name="name" class="name_input" value="@ViewData["fileName"]" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Contains that text:</p>
+                </td>
+                <td>
+                    <textarea name="text" id="txt">@ViewData["fileTXT"]</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Save" />
+                    <input type="text" name="oldName" style="display:none" value="@ViewData["note"]"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+    
+    <p>@ViewData["note"]</p>
+
+    
+    
+</body>
+</html>
+

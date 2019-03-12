@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewData["Title"] = "NoteList";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>!DOCTYPE</title>
+    <meta charset="utf-8">
+ </head>
+<body>
+    @foreach (string item in ViewBag.Arr)
+    {
+        <a href="\StorageNote\ExactNote?noteName=@item" >@item.Remove(item.Length-24, 24)</a><br />
+    }
+</body>
+</html>
+

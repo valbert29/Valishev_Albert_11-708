@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["Title"] = "ExactNote";
+}
+
+<h2>ExactNote</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>!DOCTYPE</title>
+    <meta charset="utf-8">
+    <style>
+        #txt {
+            border: 2px solid black;
+            height: 30vh;
+            width: 50vw;
+        }
+        .btn{
+            border:1px solid grey;
+        }
+        
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                <pre>Your Note with Name: @ViewData["fileName"]</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Contains that text:</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <pre id="txt">@ViewData["fileTXT"]</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a class="btn" href="\StorageNote\Download?fileName=@ViewData["note"]">Download</a>
+                <a class="btn" href="\StorageNote\Edit?fileName=@ViewData["note"]">Edit</a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

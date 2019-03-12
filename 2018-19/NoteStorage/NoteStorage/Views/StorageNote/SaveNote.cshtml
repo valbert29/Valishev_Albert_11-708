@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewData["Title"] = "SaveNote";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>!DOCTYPE</title>
+    <meta charset="utf-8">
+    <link href="@Url.Content("~/Content/IndexStyles.css")" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+        }
+
+        textarea {
+            width: 300px;
+            height: 200px;
+        }
+
+        #txt {
+            border: 2px solid black;
+            height: 30vh;
+            width: 50vw;
+        }
+
+        .btn {
+            border: 1px solid grey;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                <p>Your Note has been Saved!</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>With Name: @ViewData["Name"]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Text: </p>
+            </td>
+            <td>
+                <pre id="txt">@ViewData["Text"]</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a href="/StorageNote/Index/" class="btn">Menu</a>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
